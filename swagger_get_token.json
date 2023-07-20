@@ -1,0 +1,138 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Dedicare backend API",
+        "description": "Dedicare backend API",
+        "version": "v1"
+    },
+    "paths": {
+        "/api/Auth/AuthUser": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [{
+                        "name": "x-api-version",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json-patch+json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            }
+                        },
+                        "application/json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            }
+                        },
+                        "text/json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            }
+                        },
+                        "application/*+json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain; x-api-version=1.0": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                }
+                            },
+                            "application/json; x-api-version=1.0": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                }
+                            },
+                            "text/json; x-api-version=1.0": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+    },
+    "components": {
+        "schemas": {
+            "AuthModel": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "password": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "tenantId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "token": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Token": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "domainEvents": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/IDomainEvent"
+                        },
+                        "description": "Domain events occurred. Only needed at runtime and won't be serialized neither to the DB nor to JSON.",
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "_Token": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "tenantId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "expirationDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "additionalProperties": false
+            },
+
+        },
+        "security": [{
+                "Bearer": []
+            }, {
+                "TenantId": []
+            }
+        ]
+    }
