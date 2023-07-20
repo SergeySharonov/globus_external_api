@@ -1,155 +1,263 @@
 {
     "openapi": "3.0.1",
     "info": {
-        "title": "Globus API",
-        "description": "Globus API",
-        "version": "v1"
+        "title": "Globus API Prd",
+        "description": "Globus API Prd",
+        "version": "1.0"
     },
+    "servers": [{
+            "url": "https://apim-staffing-dev-weu-001.azure-api.net/prd"
+        }
+    ],
     "paths": {
-        "/api/External/v1/Orders": {
-            "get": {
-                "tags": [
-                    "OrdersExternal"
-                ],
-                "summary": "Get list of orders, with pagination and optional filters by dates.",
-                "description": "Now only period orders are supported by this method. If need shift orders, please contact Globus support.",
-                "parameters": [{
-                        "name": "pageNum",
-                        "in": "query",
-                        "description": "Page number (1 or 0 for the first page)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    }, {
-                        "name": "pageSize",
-                        "in": "query",
-                        "description": "Page size (default 100 if omitted, maximum 1000)",
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    }, {
-                        "name": "createdDateMin",
-                        "in": "query",
-                        "description": "Filter orders only created after this date (UTC, yyyy-MM-ddTHH:mm:ssZ , inclusive)",
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time"
-                        }
-                    }, {
-                        "name": "createdDateMax",
-                        "in": "query",
-                        "description": "Filter orders only created before this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time"
-                        }
-                    }, {
-                        "name": "modifiedDateMin",
-                        "in": "query",
-                        "description": "Filter orders only modified after this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time"
-                        }
-                    }, {
-                        "name": "modifiedDateMax",
-                        "in": "query",
-                        "description": "Filter orders only modified before this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time"
-                        }
-                    }, {
-                        "name": "orderByField",
-                        "in": "query",
-                        "description": "Select field to order results by. Allowed  values: ModifiedDate (default), CreatedDate",
-                        "schema": {
-                            "$ref": "#/components/schemas/OrderByAllowedFields"
-                        }
-                    }, {
-                        "name": "orderByDescending",
-                        "in": "query",
-                        "description": "Sort order. By default is true (results are sorted in descending order)",
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
+        "/api/Auth/AuthUser": {
+            "post": {
+                "summary": "Get Auth Token",
+                "description": "Get Auth Token",
+                "operationId": "63bffe41ac862561eb353fe2",
+                "requestBody": {
+                    "content": {
+                        "application/json-patch+json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            },
+                            "example": {
+                                "name": "string",
+                                "password": "string"
+                            }
+                        },
+                        "application/json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            },
+                            "example": {
+                                "name": "string",
+                                "password": "string"
+                            }
+                        },
+                        "text/json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            },
+                            "example": {
+                                "name": "string",
+                                "password": "string"
+                            }
+                        },
+                        "application/*+json; x-api-version=1.0": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthModel"
+                            },
+                            "example": {
+                                "name": "string",
+                                "password": "string"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Success",
                         "content": {
                             "text/plain; x-api-version=1.0": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/OrderBasicExternalView"
+                                    "$ref": "#/components/schemas/Token"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
                                     }
                                 }
                             },
                             "application/json; x-api-version=1.0": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/OrderBasicExternalView"
-                                    }
+                                    "$ref": "#/components/schemas/Token"
+                                },
+                                "example": {
+                                    "_Token": "string",
+                                    "tenantId": "string",
+                                    "userId": "string",
+                                    "expirationDate": "string"
                                 }
                             },
                             "text/json; x-api-version=1.0": {
                                 "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                },
+                                "example": {
+                                    "_Token": "string",
+                                    "tenantId": "string",
+                                    "userId": "string",
+                                    "expirationDate": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/External/v1/Orders": {
+            "get": {
+                "tags": [
+                    "OrderExternal"
+                ],
+                "summary": "Get list of orders",
+                "description": "Get list of orders list by filter and with pagination",
+                "operationId": "get-api-external-v1-orders-get",
+                "parameters": [{
+                        "name": "pageNum",
+                        "in": "query",
+                        "description": "Page number (1 or 0 for the first page)",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }, {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Page size (default 100 if omitted, maximum 1000)",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }, {
+                        "name": "createdDateMin",
+                        "in": "query",
+                        "description": "Filter orders only created after this date (UTC, yyyy-MM-ddTHH:mm:ssZ , inclusive)",
+                        "schema": {
+                            "type": "datetime"
+                        }
+                    }, {
+                        "name": "createdDateMax",
+                        "in": "query",
+                        "description": "Filter orders only created before this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
+                        "schema": {
+                            "type": "datetime"
+                        }
+                    }, {
+                        "name": "modifiedDateMin",
+                        "in": "query",
+                        "description": "Filter orders only modified after this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
+                        "schema": {
+                            "type": "datetime"
+                        }
+                    }, {
+                        "name": "modifiedDateMax",
+                        "in": "query",
+                        "description": "Filter orders only modified before this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
+                        "schema": {
+                            "type": "datetime"
+                        }
+                    }, {
+                        "name": "orderByField",
+                        "in": "query",
+                        "description": "Select field to order results by. Allowed values: ModifiedDate (default), CreatedDate",
+                        "schema": {
+                            "enum": [
+                                "modifiedDate",
+                                "createdDate"
+                            ],
+                            "type": "string",
+                            "default": "modifiedDate"
+                        }
+                    }, {
+                        "name": "orderByDescending",
+                        "in": "query",
+                        "description": "Sort order. By default is true (results are sorted in descending order)",
+                        "schema": {
+                            "enum": [
+                                "true",
+                                "false"
+                            ],
+                            "type": "bool",
+                            "default": "true"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json; x-api-version=1.0": {
+                                "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/OrderBasicExternalView"
+                                        "$ref": "#/components/schemas/OrderExternal"
                                     }
+                                },
+                                "example": {
+                                    "entities": [{
+                                            "id": "5a986efe-e7e9-4d7d-9611-f2cce8714798",
+                                            "orderId": "050926b4-f4da-4a52-affd-0a91eb448526",
+                                            "customer": "Malmõ stad/BUMS",
+                                            "department": "LSS",
+                                            "location": "Malmö",
+                                            "role": "Kreftsykepleier",
+                                            "periodStart": "2022-12-18T23:00:00.0000000+00:00",
+                                            "periodEnd": "2022-12-24T22:59:59.9990000+00:00",
+                                            "week": [{
+                                                    "week": 51,
+                                                    "year": 2022
+                                                }
+                                            ],
+                                            "globusUrl": "https://globus-staffing-dev.azureedge.net/demo/requests/5a986efe-e7e9-4d7d-9611-f2cce8714798#ACTIVITY",
+                                            "createdUtc": "2022-12-09T07:38:50.5780000+00:00",
+                                            "modifiedUtc": "2022-12-26T09:05:50.8290000+00:00"
+                                        }, {
+                                            "id": "2f86b296-135c-4837-873d-a8bab37e1571",
+                                            "orderId": "076001ae-e223-4171-b84f-2d32a51d908e",
+                                            "customer": "Karolinska Universitetssjukhuset",
+                                            "department": "C6 35 LIVA /& BIMA barn Solna",
+                                            "location": "Solna",
+                                            "role": "Anestesisykepleier",
+                                            "periodStart": "2022-12-08T23:00:00.0000000+00:00",
+                                            "periodEnd": "2022-12-26T22:59:59.9990000+00:00",
+                                            "weekNumbers": [{
+                                                    "week": 49,
+                                                    "year": 2022
+                                                }, {
+                                                    "week": 50,
+                                                    "year": 2022
+                                                }, {
+                                                    "week": 51,
+                                                    "year": 2022
+                                                }, {
+                                                    "week": 52,
+                                                    "year": 2022
+                                                }
+                                            ],
+                                            "globusUrl": "https://globus-staffing-dev.azureedge.net/demo/requests/2f86b296-135c-4837-873d-a8bab37e1571#ACTIVITY",
+                                            "createdUtc": "2022-12-08T22:40:20.8330000+00:00",
+                                            "modifiedUtc": "2022-12-28T21:57:32.8020000+00:00"
+                                        }, {
+                                            "id": "bfe14eb7-f9b2-4bdc-85a6-0ef2b4882a60",
+                                            "orderId": "04fbcaad-19c3-44bf-867b-e9c2350693c5",
+                                            "customer": "Danderyds Sjukhuset",
+                                            "department": "Akutmottagning Vuxen",
+                                            "location": "Danderyd",
+                                            "role": "Intensivsykepleier",
+                                            "periodStart": "2022-12-25T23:00:00.0000000+00:00",
+                                            "periodEnd": "2023-01-01T22:59:59.9990000+00:00",
+                                            "week": [{
+                                                    "week": 52,
+                                                    "year": 2022
+                                                }
+                                            ],
+                                            "globusUrl": "https://globus-staffing-dev.azureedge.net/demo/requests/bfe14eb7-f9b2-4bdc-85a6-0ef2b4882a60#ACTIVITY",
+                                            "createdUtc": "2022-12-23T11:50:37.7270000+00:00",
+                                            "modifiedUtc": "2023-01-09T08:15:50.4150000+00:00"
+                                        }
+                                    ]
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "text/plain; x-api-version=1.0": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ProblemDetails"
-                                }
-                            },
-                            "application/json; x-api-version=1.0": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ProblemDetails"
-                                }
-                            },
-                            "text/json; x-api-version=1.0": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ProblemDetails"
-                                }
-                            }
-                        }
+                        "description": ""
                     },
                     "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "text/plain; x-api-version=1.0": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ProblemDetails"
-                                }
-                            },
-                            "application/json; x-api-version=1.0": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ProblemDetails"
-                                }
-                            },
-                            "text/json; x-api-version=1.0": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ProblemDetails"
-                                }
-                            }
-                        }
+                        "description": ""
                     },
                     "500": {
-                        "description": "Server Error"
+                        "description": ""
                     }
                 }
             }
@@ -157,135 +265,144 @@
     },
     "components": {
         "schemas": {
-            "OrderBasicExternalView": {
+            "AuthModel": {
                 "type": "object",
                 "properties": {
-                    "id": {
-                        "type": "string",
-                        "description": "Id assigned by Globus",
-                        "nullable": true
-                    },
-                    "orderId": {
-                        "type": "string",
-                        "description": "Original order id in the source system",
-                        "nullable": true
-                    },
-                    "customer": {
+                    "name": {
                         "type": "string",
                         "nullable": true
                     },
-                    "department": {
+                    "password": {
                         "type": "string",
-                        "nullable": true
-                    },
-                    "location": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "role": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "periodStart": {
-                        "type": "string",
-                        "description": "Date and time of first week (or shift) start in this order, UTC, format 'yyyy-MM-ddTHH:mm:ssZ',",
-                        "format": "date-time",
-                        "nullable": true
-                    },
-                    "periodEnd": {
-                        "type": "string",
-                        "description": "Date and time of last week (or shift) end in this order, UTC, format 'yyyy-MM-ddTHH:mm:ssZ',",
-                        "format": "date-time",
-                        "nullable": true
-                    },
-                    "weeks": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/WeekAndYear"
-                        },
-                        "description": "Ordinal numbers of weeks (including year) that are included in this period order",
-                        "nullable": true
-                    },
-                    "globusUrl": {
-                        "type": "string",
-                        "description": "Link to open order in Globus",
-                        "nullable": true
-                    },
-                    "createdUtc": {
-                        "type": "string",
-                        "description": "UTC date and time when order was created",
-                        "format": "date-time"
-                    },
-                    "modifiedUtc": {
-                        "type": "string",
-                        "description": "UTC date and time when order was created",
-                        "format": "date-time",
                         "nullable": true
                     }
                 },
                 "additionalProperties": false
             },
-			 "WeekAndYear": {
-				"type": "object",
-				"properties": {
-				  "week": {
-					"type": "integer",
-					"format": "int32"
-				  },
-				  "year": {
-					"type": "integer",
-					"format": "int32"
-				  }
-				},
-				"additionalProperties": false
-			  },
-            "ProblemDetails": {
+            "Token": {
                 "type": "object",
                 "properties": {
-                    "type": {
+                    "_Token": {
                         "type": "string",
                         "nullable": true
                     },
-                    "title": {
+                    "tenantId": {
                         "type": "string",
                         "nullable": true
                     },
-                    "status": {
-                        "type": "integer",
-                        "format": "int32",
-                        "nullable": true
-                    },
-                    "detail": {
+                    "userId": {
                         "type": "string",
                         "nullable": true
                     },
-                    "instance": {
+                    "expirationDate": {
                         "type": "string",
-                        "nullable": true
+                        "format": "date-time"
                     }
                 },
-                "additionalProperties": {}
+                "additionalProperties": false
+            },
+            "WeekAndYear": {
+                "type": "object",
+                "properties": {
+                    "week": {
+                        "type": "integer"
+                    },
+                    "year": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "OrderExternal": {
+                "type": "object",
+                "properties": {
+                    "entities": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id",
+                                "orderId",
+                                "customer",
+                                "department",
+                                "location",
+                                "role",
+                                "periodStart",
+                                "periodEnd",
+                                "weeks",
+                                "globusUrl",
+                                "createdUtc",
+                                "modifiedUtc"
+                            ],
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Id assigned by Globus"
+                                },
+                                "orderId": {
+                                    "type": "string",
+                                    "description": "Original order id in the source system"
+                                },
+                                "customer": {
+                                    "type": "string"
+                                },
+                                "department": {
+                                    "type": "string"
+                                },
+                                "location": {
+                                    "type": "string"
+                                },
+                                "role": {
+                                    "type": "string"
+                                },
+                                "periodStart": {
+                                    "type": "string",
+                                    "description": "Date and time of first week (or shift) start in this order, UTC, format 'yyyy-MM-ddTHH:mm:ssZ"
+                                },
+                                "periodEnd": {
+                                    "type": "string",
+                                    "description": "Date and time of last week (or shift) end in this order, UTC, format yyyy-MM-ddTHH:mm:ssZ"
+                                },
+                                "weeks": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WeekAndYear"
+                                    },
+                                    "description": "Ordinal numbers of weeks that are included in this period order"
+                                },
+                                "globusUrl": {
+                                    "type": "string"
+                                },
+                                "createdUtc": {
+                                    "type": "string",
+                                    "description": "UTC date and time when order was created, format yyyy-MM-ddTHH:mm:ssZ"
+                                },
+                                "modifiedUtc": {
+                                    "type": "string",
+                                    "description": "UTC date and time when order was created, format yyyy-MM-ddTHH:mm:ssZ"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "securitySchemes": {
-            "Bearer": {
+            "apiKeyHeader": {
                 "type": "apiKey",
-                "description": "Standard Authorization header",
-                "name": "Authorization",
+                "name": "Ocp-Apim-Subscription-Key",
                 "in": "header"
             },
-            "TenantId": {
+            "apiKeyQuery": {
                 "type": "apiKey",
-                "description": "Used for setting up tenantId",
-                "name": "AuthTenantId",
-                "in": "header"
+                "name": "subscription-key",
+                "in": "query"
             }
         }
     },
     "security": [{
-            "Bearer": []
+            "apiKeyHeader": []
         }, {
-            "TenantId": []
+            "apiKeyQuery": []
         }
     ]
 }
