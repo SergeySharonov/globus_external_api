@@ -66,7 +66,7 @@
                     }
                 }
             }
-        },
+        }
     },
     "components": {
         "schemas": {
@@ -80,54 +80,24 @@
                     "password": {
                         "type": "string",
                         "nullable": true
-                    },
-                    "tenantId": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "token": {
-                        "type": "string",
-                        "nullable": true
                     }
                 },
                 "additionalProperties": false
             },
-            "Token": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "domainEvents": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/IDomainEvent"
-                        },
-                        "description": "Domain events occurred. Only needed at runtime and won't be serialized neither to the DB nor to JSON.",
-                        "nullable": true,
-                        "readOnly": true
-                    },
-                    "_Token": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "tenantId": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "userId": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "expirationDate": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
+            "securitySchemes": {
+                "Bearer": {
+                    "type": "apiKey",
+                    "description": "Standard Authorization header",
+                    "name": "Authorization",
+                    "in": "header"
                 },
-                "additionalProperties": false
-            },
-
+                "TenantId": {
+                    "type": "apiKey",
+                    "description": "Used for setting up tenantId",
+                    "name": "AuthTenantId",
+                    "in": "header"
+                }
+            }
         },
         "security": [{
                 "Bearer": []
@@ -136,3 +106,4 @@
             }
         ]
     }
+}
