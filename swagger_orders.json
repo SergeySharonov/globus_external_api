@@ -1,0 +1,309 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Globus API",
+    "description": "Globus API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/External/v1/Orders": {
+      "get": {
+        "tags": [
+          "OrdersExternal"
+        ],
+        "summary": "Get list of orders, with pagination and optional filters by dates.",
+        "description": "Now only period orders are supported by this method. If need shift orders, please contact Globus support.",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "Page number (1 or 0 for the first page)",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Page size (default 100 if omitted, maximum 1000)",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "createdDateMin",
+            "in": "query",
+            "description": "Filter orders only created after this date (UTC, yyyy-MM-ddTHH:mm:ssZ , inclusive)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "createdDateMax",
+            "in": "query",
+            "description": "Filter orders only created before this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "modifiedDateMin",
+            "in": "query",
+            "description": "Filter orders only modified after this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "modifiedDateMax",
+            "in": "query",
+            "description": "Filter orders only modified before this date (UTC, yyyy-MM-ddTHH:mm:ssZ, inclusive)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "orderByField",
+            "in": "query",
+            "description": "Select field to order results by. Allowed  values: ModifiedDate (default), CreatedDate",
+            "schema": {
+              "$ref": "#/components/schemas/OrderByAllowedFields"
+            }
+          },
+          {
+            "name": "orderByDescending",
+            "in": "query",
+            "description": "Sort order. By default is true (results are sorted in descending order)",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderBasicExternalView"
+                  }
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderBasicExternalView"
+                  }
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderBasicExternalView"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OrderBasicExternalView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id assigned by Globus",
+            "nullable": true
+          },
+          "orderId": {
+            "type": "string",
+            "description": "Original order id in the source system",
+            "nullable": true
+          },
+          "customer": {
+            "type": "string",
+            "nullable": true
+          },
+          "department": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "periodStart": {
+            "type": "string",
+            "description": "Date and time of first week (or shift) start in this order, UTC, format 'yyyy-MM-ddTHH:mm:ssZ',",
+            "format": "date-time",
+            "nullable": true
+          },
+          "periodEnd": {
+            "type": "string",
+            "description": "Date and time of last week (or shift) end in this order, UTC, format 'yyyy-MM-ddTHH:mm:ssZ',",
+            "format": "date-time",
+            "nullable": true
+          },
+          "weeks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WeekAndYear"
+            },
+            "description": "Ordinal numbers of weeks (including year) that are included in this period order",
+            "nullable": true
+          },
+          "globusUrl": {
+            "type": "string",
+            "description": "Link to open order in Globus",
+            "nullable": true
+          },
+          "createdUtc": {
+            "type": "string",
+            "description": "UTC date and time when order was created",
+            "format": "date-time"
+          },
+          "modifiedUtc": {
+            "type": "string",
+            "description": "UTC date and time when order was created",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderByAllowedFields": {
+        "enum": [
+          "Default",
+          "CreatedDate",
+          "ModifiedDate"
+        ],
+        "type": "string"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "WeekAndYear": {
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Standard Authorization header",
+        "name": "Authorization",
+        "in": "header"
+      },
+      "TenantId": {
+        "type": "apiKey",
+        "description": "Used for setting up tenantId",
+        "name": "AuthTenantId",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    },
+    {
+      "TenantId": [ ]
+    }
+  ]
+}
